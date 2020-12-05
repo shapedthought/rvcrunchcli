@@ -1,6 +1,6 @@
 ## RvCrunch- RVTools reporter
 
-RvCrunch is a simple CLI tool to provide a report that has relevant information for a Veeam sizing. The base function produces a report with an environment breakdown.
+RvCrunch is a simple CLI tool that provides a report with relevant information for a Veeam sizing. The base function produces a report with an environment breakdown.
 
 There are also mini reports that provide quick reports on key information from the RvTools report.
 
