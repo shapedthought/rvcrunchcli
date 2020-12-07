@@ -22,12 +22,12 @@ Using -sn or --savename allows you to specify the report name, otherwise the def
 Using -vse or --vseexport will export a VSE compatible txt file that can be uploaded.
 Note that the will be Powered On VMs only and the main report must be run.
 
-There are also several mini reports that provide certain key info, these are shown in the command line. The exception to this is the RDM report as output worked better in excel format.
+There are also several mini reports that provide certain key info, these are shown in the command line.
 -vm : Provides the total VM count
 -dc : Provides the Datacenter names
 -cl : Provides the Cluster names
 -dc_cl : Groups the clusters by the Datacenter
--rdm : Export an excel with RDMs by VM plus capacity in TB
+-rdm : Export an excel with RDMs by VM plus capacity in TB (optional export)
 
 These can be run alongside the main report or instead. To prevent the main report being run when using mini reports use the -sr flag.
 
