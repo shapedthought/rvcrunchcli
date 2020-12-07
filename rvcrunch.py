@@ -30,7 +30,7 @@ def main():
     Using -po or --poweredon will only display Powered On virtual machine info.
 
     Using -vse or --vseexport will export a VSE compatible txt file that can be uploaded.
-    Note that the will be Powered On VMs only.
+    Note that the will be Powered On VMs only and the main report must be run.
 
     Using -sn or --savename allows you to specify the report name.
 
@@ -256,7 +256,7 @@ def main():
         try:
             vse_export()
         except:
-            raise RuntimeError("Something bad happend...")
+            raise RuntimeError("Error in creating the VSE Export")
 
 
 if __name__ == "__main__":

@@ -15,9 +15,12 @@ Specifying the file path as the first arguement will run the main "Crunch" repor
 Example:
 `python .\rvcrunch.py "C:\path\to\rvtools\rvtools.xlsx`
 
-Using --po or --poweredon will only display Powered On virtual machine info, otherwise both Powered Off machines will also be listed.
+Using -po or --poweredon will only display Powered On virtual machine info, otherwise both Powered Off machines will also be listed.
 
-Using --sn or --savename allows you to specify the report name, otherwise the default 'report.xlsx' will be used.
+Using -sn or --savename allows you to specify the report name, otherwise the default 'report.xlsx' will be used.
+
+Using -vse or --vseexport will export a VSE compatible txt file that can be uploaded.
+Note that the will be Powered On VMs only and the main report must be run.
 
 There are also several mini reports that provide certain key info, these are shown in the command line. The exception to this is the RDM report as output worked better in excel format.
 -vm : Provides the total VM count
