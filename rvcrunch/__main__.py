@@ -5,16 +5,44 @@ import pandas as pd
 import numpy as np
 import math
 import json
-import pprint
-from workload_dict import work_dict
-from pptx import Presentation
+
+# from workload_dict import work_dict
+
+work_dict = {
+    "workLoadName": "None",
+    "backupType": "vm",
+    "site": "Site_A",
+    "workLoadCap": 0,
+    "growthPercent": 10,
+    "scopeYears": 5,
+    "backupWindow": 8,
+    "changeRate": 5,
+    "reduction": 50,
+    "vmQty": 0,
+    "vmVmdkRatio": 4,
+    "usePerVM": "perVM",
+    "useReFs": "yes",
+    "rpsBu": 30,
+    "cloudMove": 0,
+    "buWeekly": 0,
+    "buMonthly": 12,
+    "buYearly": 0,
+    "copySite": "Site_B",
+    "rpsBuCopy": 30,
+    "buCopyWeekly": 0,
+    "buCopyMonthly": 0,
+    "buCopyYearly": 0,
+    "cloudEnabled": "false",
+    "bandWidthInc": 0,
+    "vmdkQty": 0,
+}
 
 
 def main():
     """
-    RvCrunch- simple reporter
+    RvCrunch CLI- simple reporter
 
-    RvCrunch is a simple tool to provide a report that has relevant information for a
+    RvCrunch is a simple CLI tool to provide a report that has relevant information for a
     Veeam sizing. The base function produces a report with an environment breakdown.
     There are also mini reports that provide quick reports on key information from
     the RvTools report.
@@ -28,9 +56,6 @@ def main():
     Using the optional parameter -sr or --skipreport will skip this report.
 
     Using -po or --poweredon will only display Powered On virtual machine info.
-
-    Using -vse or --vseexport will export a VSE compatible txt file that can be uploaded.
-    Note that the will be Powered On VMs only and the main report must be run.
 
     Using -sn or --savename allows you to specify the report name.
 
@@ -98,60 +123,61 @@ def main():
         raise FileNotFoundError("File or Required tabs not present")
 
     # Main report code
-    if args.skipreport:
-        try:
-            # Filter out all Powered Off VMs
-            if args.poweredon:
-                v_info_data = v_info_data[v_info_data["Powerstate"] == "poweredOn"]
-                v_partition_data = v_partition_data[
-                    v_partition_data["Powerstate"] == "poweredOn"
-                ]
 
-            # Add TB columns
-            v_info_data["vInfo TB"] = round(v_info_data["In Use MB"] / (1024 ** 2), 2)
-            v_partition_data["vPartition TB"] = round(
-                (v_partition_data["Capacity MB"] - v_partition_data["Free MB"])
-                / (1024 ** 2),
-                2,
-            )
-            v_partition_data = v_partition_data[["VM", "vPartition TB"]]
-
-            # Use groupby to calculate the total vpartition capacity per-vm
-            v_partition_data = v_partition_data.groupby(["VM"], as_index=False).sum()
-
-            # Combine the data into a single dataframe
-            combo_data = pd.merge(
-                v_info_data, v_partition_data, on="VM", how="outer"
-            ).fillna(0)
-
-            # Replace the vpartition capacity with the vinfo capacity where the vpartiion capacity is zero
-            combo_data["Agg Cap TB"] = np.where(
-                combo_data["vPartition TB"] == 0,
-                combo_data["vInfo TB"],
-                combo_data["vPartition TB"],
-            )
-            combo_data = combo_data[
-                [
-                    "Powerstate",
-                    "VM Count",
-                    "Disks",
-                    "vInfo TB",
-                    "vPartition TB",
-                    "Datacenter",
-                    "Agg Cap TB",
-                    "Cluster",
-                ]
+    try:
+        # Filter out all Powered Off VMs
+        if args.poweredon:
+            v_info_data = v_info_data[v_info_data["Powerstate"] == "poweredOn"]
+            v_partition_data = v_partition_data[
+                v_partition_data["Powerstate"] == "poweredOn"
             ]
 
-            # Save the data to a file
+        # Add TB columns
+        v_info_data["vInfo TB"] = round(v_info_data["In Use MB"] / (1024 ** 2), 2)
+        v_partition_data["vPartition TB"] = round(
+            (v_partition_data["Capacity MB"] - v_partition_data["Free MB"])
+            / (1024 ** 2),
+            2,
+        )
+        v_partition_data = v_partition_data[["VM", "vPartition TB"]]
+
+        # Use groupby to calculate the total vpartition capacity per-vm
+        v_partition_data = v_partition_data.groupby(["VM"], as_index=False).sum()
+
+        # Combine the data into a single dataframe
+        combo_data = pd.merge(
+            v_info_data, v_partition_data, on="VM", how="outer"
+        ).fillna(0)
+
+        # Replace the vpartition capacity with the vinfo capacity where the vpartiion capacity is zero
+        combo_data["Agg Cap TB"] = np.where(
+            combo_data["vPartition TB"] == 0,
+            combo_data["vInfo TB"],
+            combo_data["vPartition TB"],
+        )
+        combo_data = combo_data[
+            [
+                "Powerstate",
+                "VM Count",
+                "Disks",
+                "vInfo TB",
+                "vPartition TB",
+                "Datacenter",
+                "Agg Cap TB",
+                "Cluster",
+            ]
+        ]
+
+        # Save the data to a file
+        if args.skipreport:
             save_name = (
                 "report.xlsx" if args.savename == None else args.savename + ".xlsx"
             )
             print(f"Crunch file saved as {save_name}")
             cap_data = combo_data.groupby(["Powerstate", "Datacenter", "Cluster"]).sum()
             cap_data.to_excel(save_name)
-        except:
-            raise RuntimeError("Error in calculation")
+    except:
+        raise RuntimeError("Error in calculation")
     # Presentation test
     # pr1 = Presentation()
     # slide1_register = pr1.slide_layouts[0]
