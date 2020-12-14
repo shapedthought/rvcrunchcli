@@ -110,6 +110,12 @@ def main():
     mini_reports.add_argument(
         "-rdm", "--rdmcheck", action="store_true", help="Check for RDMs"
     )
+    mini_reports.add_argument(
+        "-vsee",
+        "--vseexcel",
+        action="store_true",
+        help="Imports VSE workloads from VSE Excel reports",
+    )
 
     args = parser.parse_args()
 
