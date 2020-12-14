@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="rvcrunch",  # Replace with your own username
-    version="1.0.0",
+    version="1.1.0",
     author="Ed Howard",
     author_email="exfhoward@protonmail.com",
     description="RvTools Analysis Tool",
@@ -18,6 +18,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    install_requires=["pandas", "numpy"],
     entry_points={
         "console_scripts": [
             "rvcrunch=rvcrunch.__main__:main",
